@@ -13,6 +13,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Ensures full commit history for SonarCloud
 
       - name: Set up JDK 21
         uses: actions/setup-java@v3
@@ -20,11 +22,17 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
+      - name: Set up Maven
+        uses: stCarolas/setup-maven@v4
+        with:
+          maven-version: '3.8.6'
+
       - name: Download Artifact from S3
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
+          mkdir -p target
           aws s3 cp s3://springboot-task-artifacts/artifacts/hello-world-1.0-SNAPSHOT.jar target/hello-world-1.0-SNAPSHOT.jar
 
       - name: Verify downloaded artifact
@@ -33,7 +41,8 @@ jobs:
       - name: Run SonarQube Scan
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn verify sonar:sonar \
-          -Dsonar.organization=maiz2k2 \
-          -Dsonar.projectKey=springboot-cicd \
-          -Dsonar.host.url=https://sonarcloud.io
+        run: |
+          mvn verify sonar:sonar \
+            -Dsonar.organization=maiz2k2 \
+            -Dsonar.projectKey=springboot-cicd \
+            -Dsonar.host.url=https://sonarcloud.io
