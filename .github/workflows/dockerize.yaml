@@ -39,7 +39,7 @@ jobs:
       - name: Build and Push Docker image
         run: |
           docker build -t springboot-app/springboot-cicd:latest .
-          docker tag springboot-app/springboot-cicd:latest 975050045168.dkr.ecr.us-east-1.amazonaws.com/springboot-app/springboot-cicd/springboot-app/springboot-cicd:latest
-          docker push 975050045168.dkr.ecr.us-east-1.amazonaws.com/springboot-app/springboot-cicd/springboot-app/springboot-cicd:latest
+          docker tag springboot-app/springboot-cicd:latest 975050045168.dkr.ecr.us-east-1.amazonaws.com/springboot-app/springboot-cicd/:latest
+          docker push 975050045168.dkr.ecr.us-east-1.amazonaws.com/springboot-app/springboot-cicd/:latest
 
      
