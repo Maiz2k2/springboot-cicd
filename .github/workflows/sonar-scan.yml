@@ -26,11 +26,10 @@ jobs:
       - name: Run SonarQube Scan
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: |
-          mvn clean verify sonar:sonar \                          
-           -Dsonar.organization=maiz2k2 \                                                                                   
-           -Dsonar.projectKey=springboot-cicd \
-           -Dsonar.host.url=https://sonarcloud.io \
-           -Dsonar.login=de5743fe18da2896d9b66df6c301f781babfcc0f
+        run: mvn clean verify sonar:sonar \
+          -Dsonar.organization=maiz2k2 \
+          -Dsonar.projectKey=springboot-cicd \
+          -Dsonar.host.url=https://sonarcloud.io
 
-#####
+
+
