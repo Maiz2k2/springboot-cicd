@@ -20,16 +20,20 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
-      - name: Build with Maven
-        run: mvn clean install
+      - name: Download Artifact from S3
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          aws s3 cp s3://springboot-task-artifacts/artifacts/hello-world-1.0-SNAPSHOT.jar target/hello-world-1.0-SNAPSHOT.jar
+
+      - name: Verify downloaded artifact
+        run: ls -l target/
 
       - name: Run SonarQube Scan
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn clean verify sonar:sonar \
+        run: mvn verify sonar:sonar \
           -Dsonar.organization=maiz2k2 \
           -Dsonar.projectKey=springboot-cicd \
           -Dsonar.host.url=https://sonarcloud.io
-
-
-
