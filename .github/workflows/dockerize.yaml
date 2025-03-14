@@ -1,0 +1,45 @@
+name: Dockerize and Push to ECR
+
+on:
+  workflow_run:
+    workflows: ["Build and Upload Artifact"]
+    types:
+      - completed
+
+jobs:
+  dockerize:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Download Artifact from S3
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}  # Use the secret for AWS region
+        run: |
+          aws s3 cp s3://springboot-task-artifacts/artifacts/hello-world-1.0-SNAPSHOT.jar ./target/hello-world-1.0-SNAPSHOT.jar
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}  # Use the secret for AWS region
+
+      - name: Log in to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+        with:
+          mask-password: true  # Mask the Docker password
+          registry-type: private
+
+      - name: Build and Push Docker image
+        run: |
+          docker build -t hello:latest .
+          docker tag hello:latest 975050045168.dkr.ecr.us-east-1.amazonaws.com/springboot-app/springboot-cicd/hello:latest
+          docker push 975050045168.dkr.ecr.us-east-1.amazonaws.com/springboot-app/springboot-cicd/hello:latest
+
+     
