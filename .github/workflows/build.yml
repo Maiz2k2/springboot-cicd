@@ -31,9 +31,9 @@ jobs:
         run: ls -l target/
 
 
-      # - name: Upload Artifact to S3
-      #   env:
-      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      #   run: |
-      #     aws s3 cp target/springboot-cicd-1.0-SNAPSHOT.jar s3://<your-s3-bucket>/artifacts/springboot-cicd-1.0-SNAPSHOT.jar
+      - name: Upload Artifact to S3
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          aws s3 cp target/hello-world-1.0-SNAPSHOT.jar s3://springboot-task-artifacts/artifacts/hello-world-1.0-SNAPSHOT.jar
