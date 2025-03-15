@@ -88,3 +88,4 @@ jobs:
             --set image.repository=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/springboot-app/springboot-cicd \
             --set image.tag=latest \
             --set imagePullSecrets[0].name=ecr-secret
+####
