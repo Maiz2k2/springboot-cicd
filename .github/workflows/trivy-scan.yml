@@ -40,13 +40,25 @@ jobs:
         run: |
           docker pull 975050045168.dkr.ecr.us-east-1.amazonaws.com/springboot-app/springboot-cicd:latest
 
-      - name: Install Trivy
+      - name: Check if Trivy is Installed
+        id: check-trivy
         run: |
-          sudo apt-get install -y wget
-          wget https://github.com/aquasecurity/trivy/releases/latest/download/trivy_Linux-64bit.tar.gz
-          tar zxvf trivy_Linux-64bit.tar.gz
-          sudo mv trivy /usr/local/bin/
+          if command -v trivy &> /dev/null; then
+            echo "Trivy is already installed."
+            echo "trivy_installed=true" >> $GITHUB_ENV
+          else
+            echo "Trivy is not installed."
+            echo "trivy_installed=false" >> $GITHUB_ENV
+          fi
 
-      - name: Run Trivy Scan
+      - name: Install Trivy (if not installed)
+        if: env.trivy_installed == 'false'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y curl
+          curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sudo sh
+          trivy --version
+
+      - name: Run Trivy Image Scan
         run: |
           trivy image 975050045168.dkr.ecr.us-east-1.amazonaws.com/springboot-app/springboot-cicd:latest --exit-code 1 --severity HIGH,CRITICAL
