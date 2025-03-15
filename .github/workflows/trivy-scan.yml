@@ -51,12 +51,14 @@ jobs:
             echo "trivy_installed=false" >> $GITHUB_ENV
           fi
 
-      - name: Install Trivy (if not installed)
+      - name: Install Trivy (Official Method)
         if: env.trivy_installed == 'false'
         run: |
+          sudo apt-get install -y wget gnupg
+          wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | gpg --dearmor | sudo tee /usr/share/keyrings/trivy.gpg > /dev/null
+          echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb generic main" | sudo tee -a /etc/apt/sources.list.d/trivy.list
           sudo apt-get update
-          sudo apt-get install -y curl
-          curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sudo sh
+          sudo apt-get install -y trivy
           trivy --version
 
       - name: Run Trivy Image Scan
