@@ -1,9 +1,10 @@
 name: CI/CD Pipeline
 
 on:
-  push:
-    branches:
-      - main
+  workflow_run:
+    workflows: ["Dockerize and Push to ECR"]
+    types:
+      - completed
 
 jobs:
   trivy-scan:
