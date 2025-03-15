@@ -1,13 +1,13 @@
 name: Deploy to EKS
 
 on:
-  workflow_run:
-    workflows: ["Trivy Scan"]
-    types:
-      - completed
+  push:
+    branches:
+      - main
 
 jobs:
   deploy:
+    needs: trivy-scan
     runs-on: ubuntu-latest
 
     steps:
